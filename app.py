@@ -3,7 +3,7 @@ import requests
 import json
 
 # ===== CONFIG =====
-GROQ_API_KEY = "gsk_ඔයාගේ-Groq-Key-එක-මෙතනට"  # console.groq.com එකෙන් ගත්ත Key එක
+GROQ_API_KEY = "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"  # console.groq.com එකෙන් ගත්ත Key එක
 DATA_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/AL-Tech-AI/main/data/questions.json"
 
 st.set_page_config(page_title="Tech Malli 😎", page_icon="🔥")
