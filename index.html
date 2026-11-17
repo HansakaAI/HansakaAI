@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Malli - Meta AI Style</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+:root{--bg:#ffffff;--text:#1c1c1e;--muted:#6b6b70;--card:#f2f2f7;--border:#e5e5ea;--blue:#0082ff;--purple:#7c3aed}
+body.dark{--bg:#1c1c1e;--text:#fff;--muted:#aeaeb2;--card:#2c2c2e;--border:#3a3a3c}
+body{background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;transition:.3s}
+/* TOP BAR - Meta AI style */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:18px}
+.logo-icon{width:32px;height:32px;border-radius:50%;background:conic-gradient(from 0deg,#0082ff,#7c3aed,#ec4899,#f59e0b,#0082ff);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.top-actions{display:flex;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:none;background:var(--card);color:var(--text);cursor:pointer;font-size:16px}
+.icon-btn.active{background:var(--blue);color:#fff}
+/* CENTER WELCOME - Meta AI style */
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.center.hidden{justify-content:flex-start;align-items:stretch;padding-top:10px}
+.greet{font-size:32px;font-weight:700;text-align:center;line-height:1.2}
+.greet span{background:linear-gradient(90deg,#0082ff,#7c3aed,#ec4899,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--muted);margin:10px 0 22px;text-align:center;font-size:15px}
+.suggest-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:520px;width:100%}
+.suggest{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px;cursor:pointer;text-align:left;transition:.2s}
+.suggest:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1)}
+.suggest .emoji{font-size:22px;margin-bottom:6px}
+.suggest b{font-size:14px;display:block}
+.suggest p{font-size:12px;color:var(--muted);margin-top:3px}
+/* CHAT */
+#chat{display:none;flex-direction:column;gap:16px;width:100%;max-width:700px;margin:0 auto;padding:10px 0 20px}
+#chat.show{display:flex}
+.msg{max-width:85%;padding:12px 16px;border-radius:20px;font-size:15px;line-height:1.6;white-space:pre-wrap;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:5px}
+.msg.ai{align-self:flex-start;background:var(--card);border-bottom-left-radius:5px}
+.msg.ai b{color:#7c3aed}
+.msg-img{width:100%;border-radius:12px;margin-top:8px}
+.actions-row{display:flex;gap:6px;margin-top:8px}
+.actions-row button{border:none;background:transparent;cursor:pointer;font-size:14px;padding:4px 8px;border-radius:15px;color:var(--muted)}
+.actions-row button:hover{background:var(--border)}
+/* MODE PILLS */
+.modes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+.modes button{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px}
+.modes button.active{background:var(--text);color:var(--bg)}
+.modes select{padding:7px 12px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--text)}
+/* BOTTOM INPUT - Meta AI style */
+.bottom{padding:10px 16px 18px;max-width:700px;width:100%;margin:0 auto}
+.input-wrap{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:30px;padding:6px 6px 6px 18px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.input-wrap input{flex:1;border:none;outline:none;background:transparent;color:var(--text);font-size:15px;padding:10px 0}
+.input-wrap button{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;font-size:18px;flex-shrink:0}
+.btn-mic{background:transparent}
+.btn-send{background:var(--blue);color:#fff}
+.btn-plus{background:transparent;font-size:22px}
+.hint{text-align:center;font-size:11px;color:var(--muted);margin-top:8px}
+/* QUIZ / PAPER MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.modal-box{background:var(--bg);width:100%;max-width:600px;max-height:85vh;overflow-y:auto;border-radius:24px 24px 0 0;padding:20px}
+.modal-box button.opt{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);text-align:left;margin:6px 0;cursor:pointer}
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:20px;display:none;z-index:200;font-size:14px}
+#loading{display:none;text-align:center;color:var(--muted);font-size:13px;padding:6px}
+.typing-dots span{display:inline-block;width:7px;height:7px;background:var(--blue);border-radius:50%;margin:0 2px;animation:bounce 1s infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}.typing-dots span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><div class="logo-icon">✦</div> Tech Malli</div>
+  <div class="top-actions">
+    <button class="icon-btn" onclick="showPapers()" title="Papers">📄</button>
+    <button class="icon-btn" onclick="startQuiz()" title="Quiz">📝</button>
+    <button class="icon-btn" onclick="setKey()" title="Groq Key">🔑</button>
+    <button class="icon-btn" onclick="document.body.classList.toggle('dark')" title="Theme">🌙</button>
+    <button class="icon-btn" onclick="newChat()" title="New Chat">✏️</button>
+  </div>
+</div>
+
+<div class="center" id="center">
+  <div id="welcome">
+    <div class="greet" id="greetText">Good morning,<br><span>මචං! 😎</span></div>
+    <div class="sub">මම Tech Malli - A/L IT 2014-2026 Paper ටිකම කටපාඩම් කරලා ඉන්න AI එක 🔥<br>මොකක්ද අද ඉගෙන ගන්නේ?</div>
+    <div class="modes" id="modes">
+      <button class="active" onclick="setMode('paper',this)">📚 Paper</button>
+      <button onclick="setMode('general',this)">🤖 General</button>
+      <button onclick="setMode('exam',this)">🎯 Exam Predict</button>
+      <button onclick="setMode('code',this)">💻 Code</button>
+      <select id="year"><option>2014</option><option>2015</option><option>2016</option><option>2017</option><option>2018</option><option>2020</option><option>2021</option><option>2022</option><option>2023</option><option selected>2024</option><option>2025</option><option>2026</option></select>
+      <select id="topic"><option>All Topics</option><option>Python</option><option>Database</option><option>Network</option><option>HTML</option><option>Logic Gates</option></select>
+    </div>
+    <div class="suggest-grid">
+      <div class="suggest" onclick="quickAsk('😂 විහිළුවක් කියන්න')"><div class="emoji">😂</div><b>විහිළුවක් කියන්න</b><p>Tech Malli ගේ Joke එකක්</p></div>
+      <div class="suggest" onclick="quickAsk('💻 Python ඉගන්නන්න, විහිළුවෙන්')"><div class="emoji">💻</div><b>Python ඉගෙන ගමු</b><p>Zero ඉඳලා Pro වෙනකම්</p></div>
+      <div class="suggest" onclick="quickAsk('🎯 2026 Exam එකට එන්න පුළුවන් ප්‍රශ්න මොනවද?')"><div class="emoji">🎯</div><b>2026 Predict</b><p>Exam එකට එන්න පුළුවන් ඒවා</p></div>
+      <div class="suggest" onclick="quickAsk('😩 Exam එකට බයයි, Motivate කරන්න')"><div class="emoji">💪</div><b>Motivation ඕනිද?</b><p>බය නැති කරන්න</p></div>
+      <div class="suggest" onclick="quickAsk('Database එකේ Primary Key කියන්නේ මොකක්ද?')"><div class="emoji">🗄️</div><b>Database</b><p>Primary Key, Foreign Key</p></div>
+      <div class="suggest" onclick="startQuiz()"><div class="emoji">📝</div><b>Quiz එකක් දාමු</b><p>5 Questions, Funny Mode</p></div>
+    </div>
+  </div>
+  <div id="chat"></div>
+  <div id="loading"><div class="typing-dots"><span></span><span></span><span></span></div> Tech Malli හිතනවා...</div>
+</div>
+
+<div class="bottom">
+  <div class="input-wrap">
+    <button class="btn-plus" onclick="showToast('📎 Photo / File එකක් එවන්න පුළුවන් වෙන්න ඉස්සරහට හදමු 😎')">+</button>
+    <input id="input" placeholder="Ask Tech Malli anything... 😎" onkeypress="if(event.key==='Enter') send()">
+    <button class="btn-mic" onclick="voiceInput()">🎤</button>
+    <button class="btn-send" onclick="send()">↑</button>
+  </div>
+  <div class="hint">Tech Malli can make mistakes. Check important info. • 2014-2026 IT Papers • Free Groq AI</div>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div>
+<div id="toast"></div>
+
+<script>
+const DATA_URL = "https://raw.githubusercontent.com/HansakaAI/tech-malli/main/data/questions.json";
+let papers = [], mode = "paper";
+let messages = JSON.parse(localStorage.getItem("tm_messages")||"null") || [];
+let hour = new Date().getHours();
+let greet = hour < 12 ? "Good morning," : hour < 17 ? "Good afternoon," : "Good evening,";
+document.getElementById("greetText").innerHTML = greet + "<br><span>මචං! 😎</span>";
+
+function showToast(t){ let el=document.getElementById("toast"); el.textContent=t; el.style.display="block"; setTimeout(()=>el.style.display="none",2500); }
+async function loadPapers(){ try{ let r=await fetch(DATA_URL); papers=await r.json(); }catch(e){} }
+loadPapers();
+function setMode(m,btn){ mode=m; document.querySelectorAll("#modes button").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); showToast("Mode: "+m+" 😎"); }
+function setKey(){ let k=prompt("Groq Key එක දාන්න මචං (console.groq.com):", localStorage.getItem("groq_key")||""); if(k){ localStorage.setItem("groq_key",k.trim()); showToast("Key එක Save වුනා! 🔥"); } }
+function detectMood(msg){ let m=msg.toLowerCase(); let funny=["machan","mchn","ado","bng","bn","patta","maru","ela","😂","🤣","😎","🔥","lol","haha","vihilu","joke","funny","moko","niyamai","supiri","ammo","hapo"]; let sad=["bayai","baya","sad","duka","fail","behe","epa","amru","😭","😢","😩","help","stress","tired"]; let serious=["paper","exam","question","prashne","explain","kiyala","denna","padam","theory","marking","syllabus"]; if(sad.some(w=>m.includes(w))) return "sad"; if(funny.some(w=>m.includes(w))) return "funny"; if(serious.some(w=>m.includes(w))) return "serious"; return "normal"; }
+async function callGroq(prompt){ let key=localStorage.getItem("groq_key"); if(!key) return "අඩෝ මචං මුලින් උඩ තියෙන 🔑 Button එක Click කරලා Groq Key එක දාන්න! console.groq.com එකෙන් Free එකක් ගන්න පුළුවන් 😎"; try{ let res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},body:JSON.stringify({model:"llama-3.3-70b-versatile",messages:[{role:"user",content:prompt}],temperature:0.8})}); if(res.ok){ let d=await res.json(); return d.choices[0].message.content; } return "අඩෝ Error එකක් ආවා 😅 Key එක හරියට දැම්මද බලපන් - "+res.status; }catch(e){ return "Internet එක Check කරන්න මචං 😅"; } }
+async function askQuestion(q){
+  let mood=detectMood(q); let moodIns="";
+  if(mood==="funny") moodIns="USER IS IN FUNNY MOOD! YOU MUST BE 10X FUNNIER! Use slang 'අඩෝ මචං, පට්ටයි බං, මරු'. Start with joke, end with joke. LOTS of emojis 😂🤣🔥😎. Roast friendly. Talk like best friend in canteen.";
+  else if(mood==="sad") moodIns="USER IS SAD / SCARED. Be funny BUT caring. First say 'අඩෝ බය වෙන්න එපා බං, මම ඉන්නවානේ 💪'. Motivate with a joke.";
+  else if(mood==="serious") moodIns="USER IS SERIOUS / STUDY MODE. Be 70% Teacher + 30% Funny. Give correct answer first, then ONE funny example. End with 'මේක Exam එකට එනවා, ලියාගනින් 📝'";
+  else moodIns="USER IS NORMAL. Be friendly + a little funny. Like a cool teacher. 2-3 emojis only.";
+  let year=document.getElementById("year").value, topic=document.getElementById("topic").value;
+  let extra="";
+  if(mode==="exam") extra="You are EXAM PREDICTOR. Analyze past 5 years papers pattern and predict 2026 questions with high probability. Give Top 10 predicted questions.";
+  if(mode==="code") extra="You are CODE TEACHER. Give code with Sinhala funny comments. Explain line by line. Give 1 practice task at end.";
+  if(mode==="general") return await callGroq(`You are Tech Malli - Sri Lanka's funniest AI friend.\nMOOD:${mood}\n${moodIns}\n${extra}\nNEVER say As an AI. Reply in same language user used. Mirror user's energy. Keep SHORT.\nUser:${q}`);
+  let context=""; let relevant=papers.filter(p=>p.year==parseInt(year));
+  for(let p of relevant){ context+=`\n--- ${p.year} IT Paper Topic:${topic} ---\n${p.content.substring(0,8000)}\n`; }
+  return await callGroq(`You are Tech Malli - Funniest A/L IT Teacher.\nMOOD:${mood}\n${moodIns}\n${extra}\nTopic:${topic}\nPast Paper Data:\n${context}\nStudent:${q}\nRULES: ALWAYS mention year like "2023 IT - Q5". Mirror user's tone. Explain with funny real life examples. End with motivation.`);
+}
+function render(){
+  let chat=document.getElementById("chat");
+  if(messages.length>0){ document.getElementById("welcome").style.display="none"; document.getElementById("center").classList.add("hidden"); chat.classList.add("show"); }
+  chat.innerHTML="";
+  messages.forEach((m,i)=>{
+    let d=document.createElement("div"); d.className="msg "+(m.role==="user"?"user":"ai");
+    d.innerHTML=m.text.replace(/\*\*(.*?)\*\*/g,"<b>$1</b>");
+    if(m.role==="ai"){
+      let act=document.createElement("div"); act.className="actions-row";
+      act.innerHTML=`<button onclick="copyText(${i})">📋 Copy</button><button onclick="likeMsg(this)">👍</button><button onclick="dislikeMsg(this)">👎</button><button onclick="speakText(${i})">🔊</button>`;
+      d.appendChild(act);
+    }
+    chat.appendChild(d);
+  });
+  let c=document.getElementById("center"); c.scrollTop=c.scrollHeight;
+}
+render();
+async function send(){
+  let inp=document.getElementById("input"); let q=inp.value.trim(); if(!q) return; inp.value="";
+  messages.push({role:'user',text:q}); render();
+  document.getElementById("loading").style.display="block";
+  let ans=await askQuestion(q);
+  document.getElementById("loading").style.display="none";
+  messages.push({role:'ai',text:ans}); render();
+  localStorage.setItem("tm_messages", JSON.stringify(messages));
+}
+function quickAsk(q){ document.getElementById("input").value=q; send(); }
+function newChat(){ if(confirm("New Chat එකක් පටන් ගන්නද?")){ messages=[]; localStorage.removeItem("tm_messages"); document.getElementById("welcome").style.display="block"; document.getElementById("center").classList.remove("hidden"); document.getElementById("chat").classList.remove("show"); document.getElementById("chat").innerHTML=""; } }
+function copyText(i){ navigator.clipboard.writeText(messages[i].text); showToast("Copy වුනා! 📋"); }
+function likeMsg(btn){ btn.textContent="❤️"; showToast("Thanks මචං! 🔥"); }
+function dislikeMsg(btn){ btn.textContent="💔"; showToast("අඩෝ sorry බං, ඊලඟ එක හොඳට දෙන්නම් 😅"); }
+function speakText(i){ let u=new SpeechSynthesisUtterance(messages[i].text); u.lang='si-LK'; speechSynthesis.speak(u); }
+function voiceInput(){ if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return showToast("Voice එක Chrome එකේ Try කරන්න 😎"); let Rec=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=new Rec(); rec.lang='si-LK'; rec.onresult=e=>{ document.getElementById("input").value=e.results[0][0].transcript; send(); }; rec.start(); showToast("🎤 කතා කරන්න මචං... Listening..."); }
+function openModal(html){ document.getElementById("modalBox").innerHTML=html; document.getElementById("modal").classList.add("open"); }
+function closeModal(){ document.getElementById("modal").classList.remove("open"); }
+document.getElementById("modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeModal(); });
+function showPapers(){ openModal("<h2>📄 Past Papers 2014-2026</h2><p style='color:var(--muted);margin:8px 0'>Paper එක Click කරලා PDF එක Download කරගන්න</p>"+papers.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;background:var(--card);padding:12px;border-radius:12px;margin:6px 0"><b>IT ${p.year}</b><a href="${p.source_url}" target="_blank" style="color:var(--blue)">📥 PDF</a></div>`).join("")+"<button onclick='closeModal()' style='width:100%;padding:12px;border:none;border-radius:12px;background:#ef4444;color:#fff;margin-top:10px;cursor:pointer'>Close ❌</button>"); }
+let quizData=[],quizIdx=0,quizScore=0;
+async function startQuiz(){ let year=document.getElementById("year").value, topic=document.getElementById("topic").value; openModal("<p>Tech Malli Quiz හදනවා... 😎</p>"); let res=await askQuestion(`Make 5 funny MCQ for A/L IT ${year}, topic ${topic}. Return ONLY JSON array like [{"question":"...","options":["A","B","C","D"],"correct":0,"explain":"Funny Sinhala explain"}]`); try{ let s=res.substring(res.indexOf("["),res.lastIndexOf("]")+1); quizData=JSON.parse(s); quizIdx=0; quizScore=0; showQuiz(); }catch(e){ openModal("<p>Quiz එක හැදුනේ නෑ 😅 ආයෙත් Try කරන්න</p><button onclick='closeModal()' style='width:100%;padding:12px;border:none;border-radius:12px;background:#ef4444;color:#fff;cursor:pointer'>Close</button>"); } }
+function showQuiz(){ if(quizIdx>=quizData.length){ let msg=quizScore>=4?"අඩෝ පට්ටයි මචං! 🔥💪 A එකක් ෂුවර්!":quizScore>=2?"ශා හොඳයි බං! 😎":"අඩෝ මචං පොඩ්ඩක් පාඩම් කරන්න ඕනි 😅"; openModal(`<h2>Quiz ඉවරයි! 🎉</h2><p style="font-size:20px;margin:10px 0">ලකුණු: ${quizScore} / ${quizData.length}</p><p>${msg}</p><button class="opt" onclick="startQuiz()">🔄 ආයෙත් Quiz එකක්</button><button class="opt" onclick="closeModal()">Close ❌</button>`); return; } let q=quizData[quizIdx]; openModal(`<h3>Q${quizIdx+1}/${quizData.length}: ${q.question}</h3>`+q.options.map((o,i)=>`<button class="opt" onclick="checkQuiz(${i})">${o}</button>`).join("")+`<p style="color:var(--muted);margin-top:10px">Score: ${quizScore}</p>`); }
+function checkQuiz(i){ let q=quizData[quizIdx]; if(i===q.correct){ quizScore++; openModal(`<h2 style="color:#10b981">✅ හරි! 🔥</h2><p>Tech Malli: ${q.explain} 😂</p><button class="opt" onclick="nextQuiz()">Next ➤</button>`); } else { openModal(`<h2 style="color:#ef4444">❌ වැරදියි බං 😅</h2><p>හරි එක: ${q.options[q.correct]}</p><p>Tech Malli: ${q.explain} 😂</p><button class="opt" onclick="nextQuiz()">Next ➤</button>`); } }
+function nextQuiz(){ quizIdx++; showQuiz(); }
+</script>
+</body>
+  </html>
